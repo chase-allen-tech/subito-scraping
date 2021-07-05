@@ -1,0 +1,116 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="form">
+    <div class="note">
+        <h1></h1>
+    </div>
+
+    <div class="form-content">
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label for="remote_city" class="text-info">Remote CityName</label><br>
+                    <select name="remote_city" class="form-control" id='remote_city'>
+                        <option value="" disabled>Select CityName</option>
+                        <option value="https://www.subito.it/annunci-italia/vendita/">www.subito.it</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label for="remote_category" class="text-info">Remote Category</label><br>
+                    <select name="remote_category" class="form-control" id="remote_category">
+                        {% for key, val in remote_categories.items %}
+                        <option value={{key}}>{{val}}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label for="select_city" class="text-info">By City</label><br>
+                    <select name="select_city" class="form-control" id="select_city">
+                        {% for key, val in select_cities.items %}
+                        <option value={{key}}>{{val}}</option>
+                        {% endfor %}
+                    </select>
+
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label for="select_category" class="text-info">By Category</label><br>
+                    <select name="select_category" class="form-control" id="select_category">
+                        {% for key, val in select_categories.items %}
+                        <option value={{key}}>{{val}}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <button type="button" class="btn btn-success btn-submit">Submit</button>
+        <button type="button" class="btn btn-primary btn-stop">Stop</button>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+        const SUBMITING = true;
+        const toggleBtns = (flag) => {
+            if(flag == SUBMITING) {
+                $('.btn-submit').prop('disabled', true);
+                $('.btn-stop').prop('disabled', false);
+            } else {
+                $('.btn-submit').prop('disabled', false);
+                $('.btn-stop').prop('disabled', true);
+            }
+        }
+        $('.btn-submit').click(e => {
+            $.ajax({
+                type: 'POST',
+                url: "{% url 'scraping' %}",
+                data: {
+                    remote_city: $('#remote_city').val(),
+                    remote_category: $('#remote_category').val(),
+                    select_city: $('#select_city').val(),
+                    select_category: $('#select_category').val(),
+                    is_start: true
+                },
+                beforeSend: function (request) {
+                    request.setRequestHeader('X-CSRFToken', csrftoken);
+                },
+                success: function (result) {
+                    // toggleBtns(!SUBMITING);
+                    console.log('success', result)
+                }
+            });
+            // toggleBtns(SUBMITING);
+        });
+        $('.btn-stop').click(e => {
+            $.ajax({
+                type: 'POST',
+                url: "{% url 'scraping' %}",
+                data: {
+                    is_start: false
+                },
+                beforeSend: function (request) {
+                    request.setRequestHeader('X-CSRFToken', csrftoken);
+                },
+                success: function (result) {
+                    // toggleBtns(!SUBMITING);
+                    console.log('stop', result)
+                }
+            });
+        })
+    });
+</script>
+
+{% endblock %}

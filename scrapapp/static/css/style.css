@@ -1,0 +1,12 @@
+body {
+    background-color: #F5F5F5;
+}
+
+#header a {
+    color: #333;
+}
+
+.site-detail {
+    max-height: 200px;
+    overflow-y: auto;
+}
