@@ -13,8 +13,11 @@
                 <div class="form-group">
                     <label for="remote_city" class="text-info">Remote CityName</label><br>
                     <select name="remote_city" class="form-control" id='remote_city'>
-                        <option value="" disabled>Select CityName</option>
-                        <option value="https://www.subito.it/annunci-italia/vendita/">www.subito.it</option>
+                        {% for key, val in remove_cities.items %}
+                        <option value={{key}}>{{val}}</option>
+                        {% endfor %}
+                        <!-- <option value="" disabled>Select CityName</option>
+                        <option value="https://www.subito.it/annunci-italia/vendita/">www.subito.it</option> -->
                     </select>
                 </div>
             </div>

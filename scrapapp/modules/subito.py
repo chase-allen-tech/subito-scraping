@@ -58,6 +58,8 @@ def trim_both(st):
 def get_total_page_number(soup):
     """ Return total page number based on pagination container """
     total_pages = soup.select('.pagination-container > .unselected-page')
+    # print(total_pages)
+    if len(total_pages) == 0: return 1
     last_page = total_pages[len(total_pages) - 1]
     last_page = last_page.select_one('a')['href']
     ind = last_page.index('?o=')
@@ -85,26 +87,32 @@ def subitoProc(post_data=None):
     category = int(trim_both(select_category[1]))
     category_url = trim_both(select_category[2])
 
+    remote_city = remote_city.split('/')
+    remote_city = remote_city[:2] + [remote_category] + remote_city[2:]
+    remote_city = '/'.join(remote_city)
+
     # Proc
-    base_url = remote_city + remote_category
+    base_url = 'https://www.subito.it/' + remote_city
+    
+    print('BASEURL:', base_url)
+
     soup = fetch_site(base_url)
     items = soup.select('[class*="SmallCard-module_link__"]')
 
     total_page_num = get_total_page_number(soup)
-
     for page in range(int(total_page_num)):
-        t_url = base_url + "/?o=%s" % (page + 1)
+        t_url = base_url + "?o=%s" % (page + 1)
 
         print('\nTarget Site URL: ', t_url)
 
         soup = fetch_site(t_url)
         items = soup.select('[class*="SmallCard-module_link__"]')
 
-        if not items or items.length == 0:
+        if not items or len(items) == 0:
             items = soup.select('[class*="BigCard-module_link__"]')
 
         for item in items:
-            print(' - ', item['href'])
+            print(' -', item['href'])
 
             user_id, title, description, price, location, images = get_item_detail(item['href'])
             if title == '': continue
