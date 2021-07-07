@@ -100,6 +100,9 @@ def subitoProc(post_data=None):
         soup = fetch_site(t_url)
         items = soup.select('[class*="SmallCard-module_link__"]')
 
+        if not items or items.length == 0:
+            items = soup.select('[class*="BigCard-module_link__"]')
+
         for item in items:
             print(' - ', item['href'])
 
